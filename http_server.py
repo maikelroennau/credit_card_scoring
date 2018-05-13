@@ -13,29 +13,40 @@ Send a POST request::
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 
-class S(BaseHTTPRequestHandler):
+
+class CreditCardScoring(BaseHTTPRequestHandler):
     def _set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        self.send_header("Content-type", "text/json")
         self.end_headers()
+
 
     def do_GET(self):
         self._set_headers()
-        self.wfile.write("<html><body><h1>hi!</h1></body></html>")
+        self.wfile.write("json")
+        # Send infrastructure information
 
-    def do_HEAD(self):
-        self._set_headers()
-        
+
     def do_POST(self):
-        # Doesn't do anything with posted data
+        content_length = int(self.headers["Content-Length"])
+        post_data = self.rfile.read(content_length)
+
+        # Validate input
+        # Run accordingly
+        #   Predict
+        #   Train model
+        #   Update model
+
         self._set_headers()
-        self.wfile.write("<html><body><h1>POST!</h1></body></html>")
-        
-def run(server_class=HTTPServer, handler_class=S, port=80):
-    server_address = ('', port)
+        self.wfile.write('{"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "prediction": 0.1495 }')
+
+
+def run(server_class=HTTPServer, handler_class=CreditCardScoring, port=8080):
+    server_address = ("", port)
     httpd = server_class(server_address, handler_class)
-    print 'Starting httpd...'
+    print("Starting server...")
     httpd.serve_forever()
+
 
 if __name__ == "__main__":
     from sys import argv
