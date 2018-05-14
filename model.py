@@ -28,7 +28,7 @@ def load_model(model_name=CURRENT_MODEL, path=MODELS_PATH):
     return pickle.load(open(os.path.join(path, model_name), 'rb'))
 
 
-def train(data_path):
+def train(data_path=MODELS_PATH):
     # load the data
     data = pd.read_parquet(data_path)
 
@@ -61,4 +61,10 @@ def predict(model, subject):
 
 
 if __name__ == "__main__":
-    pass
+    from sys import argv
+
+    if len(argv) == 2:
+        if argv[1] == 'train':
+            train()
+    else:
+        pass
