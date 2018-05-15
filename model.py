@@ -6,6 +6,7 @@ from sklearn.metrics import roc_auc_score
 from constants import *
 
 import os
+import glob
 import pickle
 from datetime import datetime
 
@@ -25,10 +26,15 @@ def save_model(model_data, path=MODELS_PATH):
 
 
 def load_model(model_name=CURRENT_MODEL, path=MODELS_PATH):
-    return pickle.load(open(os.path.join(path, model_name), 'rb'))
+    models_list = glob.glob(MODELS_PATH + "*.sav")
+
+    if len(models_list) == 0:
+        return None
+    else:
+        return pickle.load(open(os.path.join(max(models_list, key=os.path.getctime)), 'rb'))
 
 
-def train(data_path=MODELS_PATH):
+def train(data_path=DATASET):
     # load the data
     data = pd.read_parquet(data_path)
 
