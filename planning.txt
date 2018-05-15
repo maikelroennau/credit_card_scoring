@@ -3,11 +3,12 @@ Development diary
 ---
 TODO:
 
-Fix setup script
 Continue development of the service
     Try to accomplish a first stable version with the minimal requirements
 
 ---
+
+Write tests!!!
 
 Implement server
     - Setup all architecture then add the services execution
