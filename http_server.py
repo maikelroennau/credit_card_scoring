@@ -7,9 +7,11 @@ Send a POST request::
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 
-from model import predict, load_model
+from model import predict, load_model, save_prediction
 from constants import *
 import json
+
+from multiprocessing import Process
 
 
 class CreditCardScoring(BaseHTTPRequestHandler):
@@ -45,9 +47,10 @@ class CreditCardScoring(BaseHTTPRequestHandler):
         response = {}
         response["id"] = data["id"]
         response["prediction"] = prediction
-        json_response = json.dumps(response)
 
         self.wfile.write(json.dumps(response))
+
+        save_prediction(response)
 
 
 def run(server_class=HTTPServer, handler_class=CreditCardScoring, port=8080):
