@@ -22,9 +22,9 @@ Implement server
 
 
 Service implementation
-    - Save and load trained models
-    - Figure out how to manage multiple models
-        Approach: add a argument in the perdict function to indicate which model to use
+    - Save and load trained models +
+    - Figure out how to manage multiple models +-
+        Approach: add a argument in the perdict function to indicate which model to use +
     - Save predicted data to create a new dataset
         Once the new data set reached X entries, train a new model
         Validate the trained model
