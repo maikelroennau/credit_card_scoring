@@ -9,6 +9,7 @@ import os
 import glob
 import pickle
 from datetime import datetime
+import json
 
 
 def split_dataset(df, validation_percentage, seed):
@@ -64,6 +65,16 @@ def predict(model, subject):
     # subject: dict with data to be predicted by the model 
     df = pd.DataFrame([subject], columns=subject.keys())
     return model.predict_proba(df[["score_3", "score_4", "score_5", "score_6"]])[:, 1][0]
+
+
+def save_prediction(prediction_data=None):
+    if prediction_data is not None:
+        print prediction_data.keys()
+        print prediction_data.values()
+        
+        # Find out why it is not working
+        df = pd.DataFrame(prediction_data.values(), columns=prediction_data.keys())
+        print df
 
 
 if __name__ == "__main__":
