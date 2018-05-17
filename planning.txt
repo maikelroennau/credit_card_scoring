@@ -3,43 +3,6 @@ Development diary
 ---
 TODO:
 
-Continue development of the service
-    Try to accomplish a first stable version with the minimal requirements
-
----
-
-Write tests!!!
-
-Implement server
-    - Setup all architecture then add the services execution
-    - Setup automatic configuration and service execution
-    *- GET request:
-        Return the current model version and the last few older ones
-    - POST request
-        Get prediction to this input
-        Train new model
-        Update current model
-
-
-Service implementation
-    - Save and load trained models +
-    - Figure out how to manage multiple models +-
-        Approach: add a argument in the perdict function to indicate which model to use +
-    - Save predicted data to create a new dataset
-        Once the new data set reached X entries, train a new model
-        Validate the trained model
-        Deploy it (or at least set it up for so)
-    
-
-Setup process
-    Start server
-    Check if is there a model available
-        If so, load model
-        Otherwise, train using stored data
-    Receive prediction requests
-        Predict input
-        Write output back
-        Store predicted data
-    
-    
-* Not priority
+Implement retraining system
+Write more tests - depends a little bit on further implementations to come
+Valitate as much as possible! Everything 
