@@ -26,9 +26,9 @@ config = json.loads(json_data)
 #
 # Creating folders and if the dataset file was provided
 #
-if not os.path.exists(config["model_path"]):
+if not os.path.exists(config["model_dir"]):
     print("Creating models directory")
-    os.mkdir(config["model_path"])
+    os.mkdir(config["model_dir"])
 
 
 if not os.path.exists(config["dataset_path"]):
@@ -39,11 +39,12 @@ if not os.path.exists(config["dataset_path"]):
 #
 # Checking for an existing model and adding it to the config file
 #
-if len(os.listdir(config["model_path"])) == 0:
+if len(os.listdir(config["model_dir"])) == 0:
+    print("Training model")
     os.system("python model.py train")
 
     # Cheking if model was generated
-    if len(os.listdir(config["model_path"])) == 0:
+    if len(os.listdir(config["model_dir"])) == 0:
         print("Model was not found!")
         print("Setup canceled.")
         exit(1)
@@ -51,7 +52,7 @@ if len(os.listdir(config["model_path"])) == 0:
 # Checking trained model (or the most recent one) and addint it to the config file
 import glob
 
-list_of_models = glob.glob(os.path.join(config["model_path"], "*.sav"))
+list_of_models = glob.glob(os.path.join(config["model_dir"], "*.sav"))
 latest_model = max(list_of_models, key=os.path.getctime)
 
 print("Setting model: {}".format(latest_model))
