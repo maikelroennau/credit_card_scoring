@@ -3,6 +3,6 @@ Development diary
 ---
 TODO:
 
-Implement retraining system
+*** Check scopes!!! ***
 Write more tests - depends a little bit on further implementations to come
 Valitate as much as possible! Everything 
