@@ -1,15 +1,21 @@
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from numpy.random import RandomState
-from sklearn.metrics import roc_auc_score
-
-from constants import *
-
-import os
 import glob
+import json
+import os
 import pickle
 from datetime import datetime
-import json
+from sys import argv
+
+import pandas as pd
+from numpy.random import RandomState
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+
+
+# Loading configurations
+config_file = "config.json"
+json_data = open(config_file).read()
+config = json.loads(json_data)
+
 
 
 def split_dataset(df, validation_percentage, seed):
@@ -20,14 +26,14 @@ def split_dataset(df, validation_percentage, seed):
     return training_set, validation_set
 
 
-def save_model(model_data, path=MODELS_PATH):
+def save_model(model_data, path=config["model_path"]):
     # Saving the model with the current date and hour
     filename = "model_{}.sav".format(datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
     pickle.dump(model_data, open(os.path.join(path, filename), "wb"))
 
 
-def load_model(model_name=CURRENT_MODEL, path=MODELS_PATH):
-    models_list = glob.glob(MODELS_PATH + "*.sav")
+def load_model(model_name=config["current_model"], path=config["model_path"]):
+    models_list = glob.glob(os.path.join(config["model_path"], "*.sav"))
 
     if len(models_list) == 0:
         return None
@@ -35,7 +41,7 @@ def load_model(model_name=CURRENT_MODEL, path=MODELS_PATH):
         return pickle.load(open(os.path.join(max(models_list, key=os.path.getctime)), 'rb'))
 
 
-def train(data_path=DATASET):
+def train(data_path=config["dataset_path"]):
     # load the data
     data = pd.read_parquet(data_path)
 
@@ -62,24 +68,12 @@ def train(data_path=DATASET):
 
 def predict(model, subject):
     # model: loaded model
-    # subject: dict with data to be predicted by the model 
+    # subject: dict with data to be predicted by the model
     df = pd.DataFrame([subject], columns=subject.keys())
-    return model.predict_proba(df[["score_3", "score_4", "score_5", "score_6"]])[:, 1][0]
+    return round(model.predict_proba(df[["score_3", "score_4", "score_5", "score_6"]])[:, 1][0], 4)
 
 
-def save_prediction(prediction_data=None):
-    if prediction_data is not None:
-        print prediction_data.keys()
-        print prediction_data.values()
-        
-        # Find out why it is not working
-        df = pd.DataFrame(prediction_data.values(), columns=prediction_data.keys())
-        print df
-
-
-if __name__ == "__main__":
-    from sys import argv
-
+if __name__ == "__main__": 
     if len(argv) == 2:
         if argv[1] == 'train':
             train()
