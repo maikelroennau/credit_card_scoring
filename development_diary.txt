@@ -5,4 +5,9 @@ TODO:
 
 *** Check scopes!!! ***
 Write more tests - depends a little bit on further implementations to come
-Valitate as much as possible! Everything 
+Valitate as much as possible! Everything
+
+*** Write documentation (READMED)
+    Explanations on how to setup
+    How it works
+    How to use
