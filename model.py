@@ -17,7 +17,6 @@ json_data = open(config_file).read()
 config = json.loads(json_data)
 
 
-
 def split_dataset(df, validation_percentage, seed):
     state = RandomState(seed)
     validation_indexes = state.choice(df.index, int(len(df.index) * validation_percentage), replace=False)
@@ -26,14 +25,15 @@ def split_dataset(df, validation_percentage, seed):
     return training_set, validation_set
 
 
-def save_model(model_data, path=config["model_path"]):
+def save_model(model_data, path=config["model_dir"]):
     # Saving the model with the current date and hour
     filename = "model_{}.sav".format(datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss"))
     pickle.dump(model_data, open(os.path.join(path, filename), "wb"))
+    return filename
 
 
-def load_model(model_name=config["current_model"], path=config["model_path"]):
-    models_list = glob.glob(os.path.join(config["model_path"], "*.sav"))
+def load_model(model_name=config["current_model"], path=config["model_dir"]):
+    models_list = glob.glob(os.path.join(config["model_dir"], "*.sav"))
 
     if len(models_list) == 0:
         return None
@@ -60,10 +60,12 @@ def train(data_path=config["dataset_path"]):
     validation_set["score_3"] = validation_set["score_3"].fillna(455)
     validation_set["default"] = validation_set["default"].fillna(False)
     validation_predictions = clf.predict_proba(validation_set[["score_3", "score_4", "score_5", "score_6"]])[:, 1]
-    print(roc_auc_score(validation_set[["default"]], validation_predictions))
+    score = roc_auc_score(validation_set[["default"]], validation_predictions)
+    print("Model's score: {}".format(score))
 
     # Saving model to disk, so we can use it later
-    save_model(clf)
+    model_name = save_model(clf)
+    return model_name, score
 
 
 def predict(model, subject):
@@ -73,7 +75,7 @@ def predict(model, subject):
     return round(model.predict_proba(df[["score_3", "score_4", "score_5", "score_6"]])[:, 1][0], 4)
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     if len(argv) == 2:
         if argv[1] == 'train':
             train()
