@@ -13,8 +13,9 @@ from sklearn.metrics import roc_auc_score
 
 # Loading configurations
 config_file = "config.json"
-json_data = open(config_file).read()
-config = json.loads(json_data)
+config = None
+with open(config_file, "r") as json_data:
+    config = json.loads(json_data.read())
 
 
 def split_dataset(df, validation_percentage, seed):
@@ -33,12 +34,14 @@ def save_model(model_data, path=config["model_dir"]):
 
 
 def load_model(model_name=config["current_model"], path=config["model_dir"]):
-    models_list = glob.glob(os.path.join(config["model_dir"], "*.sav"))
+    models_list = glob.glob(os.path.join(path, "*.sav"))
 
     if len(models_list) == 0:
         return None
+    elif model_name in models_list:
+        return pickle.load(open(model_name, 'rb'))
     else:
-        return pickle.load(open(os.path.join(max(models_list, key=os.path.getctime)), 'rb'))
+        return pickle.load(open(max(models_list, key=os.path.getctime), 'rb'))
 
 
 def train(data_path=config["dataset_path"]):
