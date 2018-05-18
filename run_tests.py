@@ -1,73 +1,147 @@
 #!/usr/bin/python
 
+import glob
+import json
+import os
+import subprocess as sp
+import time
+
 import requests
 
 
 def test_predict():
-    from multiprocessing import Process
-    import time
+    print("\n###")
+    print("Testing prediction")
 
-    process = Process(target=start_server)
-    process.start()
+    server = start_server()
 
-    # Giving a few seconds to have the server start
-    time.sleep(10)
+    try:
+        data = {"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "score_3": 480.0, "score_4": 105.2, "score_5": 0.8514, "score_6": 94.2, "income": 500000}
 
-    data = {"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "score_3": 480.0, "score_4": 105.2, "score_5": 0.8514, "score_6": 94.2, "income": 500000}
+        response = requests.post("http://localhost:8080/predict", json=data)
+        response = str(response.text)
 
-    r = requests.post("http://localhost:8080/predict", json=data)
+        print("RESPONSE: {}".format(response))
 
-    response = str(r.text)
+        if response == '{"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "prediction": 0.1495}':
+            print("Predict endpoint: PASS")
+            stop_server(server)
+            exit(0)
+        else:
+            print("Predict endpoint: FAIL")
+            stop_server(server)
+            exit(1)
+    except:
+        stop_server(server)
 
-    print("RESPONSE: {}".format(response))
 
-    if response == "{'id': u'8db4206f-8878-174d-7a23-dd2c4f4ef5a0', 'prediction': 0.1495}":
-        print "PASS: Predict endpoint ok"
-        process.terminate()
+def test_train_model():
+    print("\n###")
+    print("Testing train model")
+
+    server = start_server()
+
+    try:
+        config = load_config(config_file)
+        n_models = len(os.listdir(config["model_dir"]))
+
+        data = {"dataset_path": "training_set.parquet"}
+        requests.post("http://localhost:8080/train", json=data)
+
+        if n_models + 1 == len(os.listdir(config["model_dir"])):
+            print("Train endpoint: PASS")
+            stop_server(server)
+            exit(0)
+        else:
+            print("Train endpoint: FAIL")
+            stop_server(server)
+            exit(1)
+    except:
+        stop_server(server)
+
+
+def test_update_model():
+    print("\n###")
+    print("Testing update model")
+
+    server = start_server()
+
+    old_model = load_config(config_file)["current_model"]
+
+    data = {"dataset_path": "training_set.parquet"}
+    response = requests.post("http://localhost:8080/train", json=data)
+
+    # For some reason the response is coming with single quotes and that is not a proper JSON
+    # So I need this ugly implementation to work around this...
+    model_name = json.loads(response.text.replace("'", "\""))["model_name"]
+
+    data = {"model_name" : "{}".format(model_name)}
+    response = requests.post("http://localhost:8080/update_model", json=data)
+
+    model_name = json.loads(response.text.replace("'", "\""))["current_model"]
+
+    if old_model != model_name:
+        print("Update model endpoint: PASS")
+        stop_server(server)
         exit(0)
     else:
-        print "FAIL: Predict endpoint ok"
-        process.terminate()
+        print("Update model endpoint: FAIL")
+        stop_server(server)
         exit(1)
+
+    try:
+        pass
+    except:
+        stop_server(server)
+
+
+def test_config():
+    print("\n###")
+    print("Testing config")
+
+    server = start_server()
+
+    try:
+        config = load_config(config_file)
+        response = requests.get("http://localhost:8080/config")
+
+        if json.dumps(config) == response.text:
+            print("Config endpoint: PASS")
+            stop_server(server)
+            exit(0)
+        else:
+            print("Config endpoint: FAIL")
+            stop_server(server)
+            exit(1)
+    except:
+        stop_server(server)
 
 
 def start_server():
-    import os
-    os.system("python run.py")
+    server = sp.Popen(['python', 'server_run.py'])
+
+    # Giving a few seconds to have the server start
+    time.sleep(3)
+
+    return server
 
 
-####
-# To be removed
-def development_test():
-    data = {"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "score_3": 480.0, "score_4": 105.2, "score_5": 0.8514, "score_6": 94.2, "income": 500000}
-
-    r = requests.post("http://localhost:8080/predict", json=data)
-
-    print r.text
+def stop_server(server_process):
+    sp.Popen.terminate(server_process)
 
 
-def development_test_2():
-    data = {"dataset_path": "training_set_2.parquet"}
-
-    r = requests.post("http://localhost:8080/train", json=data)
-
-    print r.text
-
-
-def development_test_3():
-    r = requests.get("http://localhost:8080/config")
-    print r.text
-
-
-def development_test_4():
-    data = {"model_name" : "model_2018-05-16_21h10m21s.sav"}
-    r = requests.post("http://localhost:8080/update_model", json=data)
-    print r.text
+def load_config(config_path):
+    # Loading config file from disk
+    with open(config_path, "r") as json_data:
+        config = json.loads(json_data.read())
+        return config
 
 
 if __name__ == "__main__":
-    # test_predict()
-    # development_test()
-    # development_test_2()
-    # development_test_3()
-    development_test_4()
+    config_file = "config.json"
+
+    # Tests to run
+    test_predict()
+    test_train_model()
+    test_config()
+    test_update_model()
