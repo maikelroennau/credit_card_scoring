@@ -4,15 +4,15 @@ Code exercise for Data Scientist position at NuBank.
 
 ## Requirements
 
-See `REQUERIMENTS_READMED.md` for an overview of the development specification.
+See `REQUERIMENTS_READMED.md` for an overview of the development specifications.
 
 ## How to setup
 
 Note: *The code works both on `Python 2` and `Python 3`, although `Python 2` was used during development and most extensively tested.*
 
-Setting up the system (assumed Linux):
+Setting up the system (assumed Ubuntu 64-bits):
 1. Clone the repository
-1. Navigate the terminal to the cloned directory
+1. Navigate the console to the cloned directory
 1. Run the setup script: `python setup.py`
     - It will install the requirements
     - Create the models directory 
@@ -90,14 +90,9 @@ The server returns the current model name (after updating to the new model) as o
 
 This service returns the server's current configuration.
 
-To get the current configuration:
-```json
-{
-    "model_name": "model_2018-05-17_21h24m06s.sav"
-}
-```
+To get the current configuration a `GET` request should be sent to the `/config` endpoint.
 
-The server will return the `config.json` file content, containing the `current_model` name, `model_dir` and `dataset_path`:
+The server will return the `config.json` file content containing the `current_model` name, `model_dir` and `dataset_path`:
 ```json
 {
     "current_model": "model_2018-05-17_21h24m06s.sav",
@@ -108,7 +103,7 @@ The server will return the `config.json` file content, containing the `current_m
 
 ## Running requests
 
-Once the setup is finished, the tests are passing and the server is running after executing the command `python server_run.py`, the server is now able to attend requests.
+Once the setup is finished, the tests are passing and the server is running after executing the command `python server_run.py`, the server is able to attend requests.
 
 Example of `POST` request using `requests` library. Sending a prediction request:
 ```python
