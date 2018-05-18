@@ -25,7 +25,7 @@ Setting up the system (assumed Linux):
 
 #### **`/predict`**
 
-This service provides predictions to inputed data.
+This service provides predictions to inputed data using a trained model.
 
 Example input:
 ```
@@ -49,7 +49,7 @@ Output:
 
 #### **`/train`**
 
-This service allow the training of a new model given a dataset. To execute a training the server expects to receive the path to the dataset.
+This service allows the training of a new model given a dataset. To execute a training the server expects to receive the path to the dataset.
 
 Example input:
 ```
@@ -58,7 +58,7 @@ Example input:
 }
 ```
 
-At the end it will returns the score and the model's name:
+At the end it will return the score and the model's name:
 ```
 {
     "score": 0.5945,
@@ -70,7 +70,7 @@ To set a newly trained model to be used in further predictions, see the next sec
 
 #### **`/update_model`**
 
-This service allows the current model to be replaced by another one without the need or restarting the server. The server expects to receive the model name (all models should be inside the `trained_models` directory therefore the prefix path is not necessary):
+This service allows the current model to be replaced by another one without the need or restarting the server. The server expects to receive the model name (all models should be inside the `model_dir` directory therefore the prefix path is not necessary):
 
 Example input:
 ```
@@ -83,5 +83,25 @@ The server returns the current model name (after updating to the new model) as o
 ```
 {
     "current_model": "model_2018-05-17_21h24m06s.sav"
+}
+```
+
+#### **`/config`**
+
+This service returns the server's current configuration.
+
+To get the current configuration:
+```
+{
+    "model_name": "model_2018-05-17_21h24m06s.sav"
+}
+```
+
+The server will return the `config.json` file content, containing the `current_model` name, `model_dir` and `dataset_path`:
+```
+{
+    "current_model": "model_2018-05-17_21h24m06s.sav",
+    "model_dir": "trained_models/",
+    "dataset_path": "training_set.parquet"
 }
 ```
