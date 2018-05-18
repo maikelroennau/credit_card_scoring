@@ -3,8 +3,6 @@ Development diary
 ---
 TODO:
 
-*** Check scopes!!! ***
-Write more tests - depends a little bit on further implementations to come
 Valitate as much as possible! Everything
 
 *** Write documentation (READMED)
