@@ -68,6 +68,7 @@ def test_update_model():
 
     old_model = load_config(config_file)["current_model"]
 
+    # Using the same file
     data = {"dataset_path": "training_set.parquet"}
     response = requests.post("http://localhost:8080/train", json=data)
 
@@ -75,7 +76,7 @@ def test_update_model():
     # So I need this ugly implementation to work around this...
     model_name = json.loads(response.text.replace("'", "\""))["model_name"]
 
-    data = {"model_name" : "{}".format(model_name)}
+    data = {"model_name": "{}".format(model_name)}
     response = requests.post("http://localhost:8080/update_model", json=data)
 
     model_name = json.loads(response.text.replace("'", "\""))["current_model"]
