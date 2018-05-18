@@ -49,7 +49,7 @@ Output:
 
 #### **`/train`**
 
-This service allow the training of a new model given a dataset.
+This service allow the training of a new model given a dataset. To execute a training the server expects to receive the path to the dataset.
 
 Example input:
 ```
@@ -58,10 +58,30 @@ Example input:
 }
 ```
 
-Output:
+At the end it will returns the score and the model's name:
 ```
 {
     "score": 0.5945,
     "model_name": "model_2018-05-17_21h47m19s.sav"
+}
+```
+
+To set a newly trained model to be used in further predictions, see the next section.
+
+#### **`/update_model`**
+
+This service allows the current model to be replaced by another one without the need or restarting the server. The server expects to receive the model name (all models should be inside the `trained_models` directory therefore the prefix path is not necessary):
+
+Example input:
+```
+{
+    "model_name": "model_2018-05-17_21h24m06s.sav"
+}
+```
+
+The server returns the current model name (after updating to the new model) as output, so the modification can be verified:
+```
+{
+    "current_model": "model_2018-05-17_21h24m06s.sav"
 }
 ```
