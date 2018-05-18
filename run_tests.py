@@ -24,11 +24,13 @@ def test_predict():
         print("RESPONSE: {}".format(response))
 
         if response == '{"id": "8db4206f-8878-174d-7a23-dd2c4f4ef5a0", "prediction": 0.1495}':
-            print("Predict endpoint: PASS")
+            print("\nPredict endpoint: PASS")
+            print("###")
             stop_server(server)
             exit(0)
         else:
-            print("Predict endpoint: FAIL")
+            print("\nPredict endpoint: FAIL")
+            print("###")            
             stop_server(server)
             exit(1)
     except:
@@ -49,11 +51,13 @@ def test_train_model():
         requests.post("http://localhost:8080/train", json=data)
 
         if n_models + 1 == len(os.listdir(config["model_dir"])):
-            print("Train endpoint: PASS")
+            print("\nTrain endpoint: PASS")
+            print("###")
             stop_server(server)
             exit(0)
         else:
-            print("Train endpoint: FAIL")
+            print("\nTrain endpoint: FAIL")
+            print("###")            
             stop_server(server)
             exit(1)
     except:
@@ -82,11 +86,13 @@ def test_update_model():
     model_name = json.loads(response.text.replace("'", "\""))["current_model"]
 
     if old_model != model_name:
-        print("Update model endpoint: PASS")
+        print("\nUpdate model endpoint: PASS")
+        print("###")
         stop_server(server)
         exit(0)
     else:
-        print("Update model endpoint: FAIL")
+        print("\nUpdate model endpoint: FAIL")
+        print("###")        
         stop_server(server)
         exit(1)
 
@@ -107,11 +113,13 @@ def test_config():
         response = requests.get("http://localhost:8080/config")
 
         if json.dumps(config) == response.text:
-            print("Config endpoint: PASS")
+            print("\nConfig endpoint: PASS")
+            print("###")
             stop_server(server)
             exit(0)
         else:
-            print("Config endpoint: FAIL")
+            print("\nConfig endpoint: FAIL")
+            print("###")            
             stop_server(server)
             exit(1)
     except:
@@ -142,7 +150,7 @@ if __name__ == "__main__":
     config_file = "config.json"
 
     # Tests to run
+    test_config()
     test_predict()
     test_train_model()
-    test_config()
     test_update_model()
