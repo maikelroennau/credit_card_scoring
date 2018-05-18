@@ -1,0 +1,5 @@
+{
+    "current_model": "",
+    "dataset_path": "training_set.parquet",
+    "model_dir": "trained_models/"
+}
