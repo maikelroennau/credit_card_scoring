@@ -4,6 +4,7 @@
 # Installing required libraries
 #
 import os
+
 os.system("pip install -r requirements.txt")
 
 
@@ -54,9 +55,10 @@ import glob
 
 list_of_models = glob.glob(os.path.join(config["model_dir"], "*.sav"))
 latest_model = max(list_of_models, key=os.path.getctime)
+model_name = os.path.split(latest_model)[1]
 
-print("Setting model: {}".format(latest_model))
-config["current_model"] = latest_model
+print("Setting model: {}".format(model_name))
+config["current_model"] = model_name
 
 with open(config_file, 'w') as outfile:
     json.dump(config, outfile)
