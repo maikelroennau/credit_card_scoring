@@ -68,7 +68,7 @@ def train(data_path=config["dataset_path"]):
 
     # Saving model to disk, so we can use it later
     model_name = save_model(clf)
-    return model_name, score
+    return model_name, round(score, 4)
 
 
 def predict(model, subject):
