@@ -1,6 +1,6 @@
-# Credit Card Scoring - NuBank
+# Credit Card Scoring
 
-Code exercise for Data Scientist position at NuBank.
+Code exercise for Data Scientist position.
 
 ## Requirements
 
